@@ -1,0 +1,251 @@
+<html ng-app="PrincipalCtrl">
+<head>
+	<meta charset="utf-8">
+	<title>Delivery</title>
+			<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+			<script type="text/javascript" src="js/angular.min.js"></script>
+			<script type="text/javascript" src="js/bootstrap.min.js"></script>
+			<script type="text/javascript" src="js/jquery.blockUI.js"></script>
+			<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+			<script type="text/javascript" src="angular/controller/empresaController.js"></script>			
+			<script type="text/javascript" src="angular/controller/PrincipalController.js"></script>
+			<script type="text/javascript" src="angular/controller/cadastroEmpresaController.js"></script>
+			<script type="text/javascript" src="angular/controller/pedidoController.js"></script>
+			<script type="text/javascript" src="angular/controller/mapaController.js"></script>
+			<script type="text/javascript" src="angular/controller/loginController.js"></script>
+			<script type="text/javascript" src="angular/service/empresaService.js"></script>
+			<script type="text/javascript" src="angular/service/produtoService.js"></script>
+			<script type="text/javascript" src="angular/service/itemService.js"></script>
+			<script type="text/javascript" src="angular/service/cidadeEstadoService.js"></script>
+			<script type="text/javascript" src="angular/directives/directiveLoginPage.js"></script>
+			<script type="text/javascript" src="angular/directives/directiveCadastroEmpresa.js"></script>
+			<script type="text/javascript" src="angular/directives/directivePrincipal.js"></script>
+			<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
+			
+			<script type="text/javascript" src="../js/date.js"></script>
+			<script type='text/javascript' src="../js/jquery.weekcalendar.js"></script>
+
+			<link rel="stylesheet" type="text/css" href=" css/bootstrap.css">
+			<link rel="stylesheet" type="text/css" href=" css/bootstrap-responsive.min.css">
+			<link rel="stylesheet" type="text/css" href=" css/bootstrap.min.css">
+			<link rel="stylesheet" type="text/css" href=" css/principal.css">
+			<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+			
+
+			  <script type="text/javascript">
+					/*Inicia o com o status da empresa como fechado*/
+					$(document).ready(function(){
+						$(".aberto").hide();
+					$(".status-aberto").hide();
+				});
+				
+				/*Gerencia o efeito sanfona*/
+				$(function() {
+				    $( "#accordion" ).accordion();
+				  });
+				
+				/*Responsavel pelo efeito de Aberto e fechado mudando a cor da bolinha*/
+				function mudarStatus(tipo){
+					if(tipo == 1){
+						$(".status-aberto").show();
+						$(".status-fechado").hide();
+						$(".aberto").show();
+						$(".fechado").hide();
+					} 
+					if(tipo == 2){
+						$(".status-aberto").hide();
+						$(".status-fechado").show();
+						$(".aberto").hide();
+						$(".fechado").show();
+					}
+					tipo = 0;
+				}
+
+				
+
+				 $(function() {
+				    $( "#chat" ).resizable();
+				  });
+			</script>
+
+			<script type="text/javascript">
+						$(".dropdown-toggle").dropdown();
+						$('#element').tooltip('show');
+						$(".collapse").collapse('dropdown-toggle');	
+
+						
+			</script>
+
+			<script type="text/javascript">
+				$(document).ready(function() { 
+					 $('#cep').keypress(function(e) {
+						if(e.which == 13){
+							$.blockUI({ message: $('#esperarCep') }); 
+						} 
+
+						console.log($('#bairro').value);
+	
+						setTimeout($.unblockUI, 10000); 
+						});    
+				}); 
+			</script>
+</head>
+
+
+<body ng-controller="EmpresaCtrl" data-ng-init="starting()">
+	<!-- Todo codigo referente a tela de login -->
+	<div ng-controller="cadastroEmpresaInicio">
+	<div id="centro" class="login">
+		<table>
+			<tr>
+				<td style="padding-right: 40px;">
+					<!--Contem os primeiros dados a ser preenchido e o banner de apresentação do aplicativo-->
+					<div id="anuncio">
+
+						<div id="banner" banner></div>
+
+						<div inicio-cadastro></div>
+
+					</div>
+				</td>
+				<td>
+					<div id="login" login></div>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<!--Todo codigo da pagina de cadastro-->
+	<div id="cadastro-page" ng-hide="depoisCadastro()" class="cadastro">
+		<div id="cabecalho">
+				<label><font>Delivery Gerenciador</font></label>
+			</div>
+			<div id="centro">
+			<div id="sub-cabecalho"></div>
+				   <div id="form">
+				   		<div id="form-title"> 
+				   			<label><font color="#ffffff">Cadastro</font></label>
+				   		</div>
+				   		
+				   			<div class="tabbable tabs-left" >
+							  <ul class="nav nav-tabs" id="painel-esquerda-cadastro" >
+							    
+							    <li class="" id="cadastro">
+							    	<a href="#tab-cadastro" data-toggle="tab">
+							    		<font color="#48990E"><i class="icon-pencil"></i> Cadastrar </font>
+							    	</a>
+							    </li>
+	    						
+	    						<li class="" id="atualizar">
+	    							<a href="#tab-update" data-toggle="tab">
+	    								<font color="#48990E"><i class="icon-edit"></i> Atualizar</font>
+	    							</a>
+	    						</li>
+	    						
+	    						<li class="" id="excluir">
+	    							<a href="#tab-excluir" data-toggle="tab">
+	    								<font color="#48990E"><i class="icon-eye-open"></i> Conta</font>
+	    							</a>
+	    						</li>
+
+							  </ul>
+			
+							  <div class="tab-content">
+							  <div class="tab-pane" id="tab-cadastro"  data-ng-init="getLatitudeLongitude()">
+								 <div preenchido></div>
+								  <table>
+								  	<tr>
+								  		<td>  
+										   	<div id="form-cadastro" cadastro></div>
+								  		</td>
+								  		<td>
+								  			<div id="mapa-cadastro">
+												<div id="map-canvas" style="height: 100%; margin: 0px; padding: 0px;"> </div>
+											</div>
+								  		</td>
+								  	</tr>
+								  </table>
+								  <div buttons></div>
+							  </div>
+							   <div class="tab-pane" id="tab-update" data-ng-init="getLatitudeLongitude()" >
+								  <table>
+								  	<tr>
+								  		<td>  
+										   	<div id="form-cadastro" atualizar></div>
+								  		</td>
+								  		<td>
+								  			<div id="mapa-cadastro">
+												<div id="map-canvas2" style="height: 100%; margin: 0px; padding: 0px;"> </div>
+											</div>
+								  		</td>
+								  	</tr>
+								  </table>
+								  <div ebuttons></div>
+							   </div>
+							   <div class="tab-pane" id="tab-excluir">
+							   		<div dados style="border: 1px solid #555555; width: 100%; heigth: 100%;"></div>
+							   </div>
+							  </div>
+
+							</div>			   		
+					</div>
+		</div>
+	</div>
+	</div>
+
+<!--	
+		#################################################################################################################################
+		###################################################  	Pagina Principal 		#################################################
+		#################################################################################################################################
+
+		Todo codigo da pagina principal-->
+	<div id="principal-page" ng-show="depoisCadastro()" class="principal" ng-controller="pedidoCtrl">
+	  	<div cabecalho></div>
+		<div id="centro-principal"  ng-controller="produtoCtrl">
+		<!--espaço entre o cabecalho e o form -->
+			<div id="sub-cabecalho"></div>
+				<!--Código formulario principal-->
+				<div id="form-main"   ng-controller="itemCtrl">
+				   	<div id="form-title"> 
+				   		<label><font color="#ffffff">{{empresa.nome}}</font></label>
+				   	</div>	
+				   	<div class="tabbable tabs-left" ng-controller="mapaRaio" >
+						<ul class="nav nav-tabs" id="painel-esquerda" >
+							<li id="pedidoOp">
+								<a href="#tab1" data-toggle="tab" id="tab-pedido">
+									<font color="#48990E"><i class="icon-share-alt"></i> Pedidos</font>
+								</a>
+							</li>
+	    					<li id="produtoOp" ng-click="listProdutos(empresa.cpfCnpj); listItens(empresa.cpfCnpj);">
+	    						<a href="#tab3" data-toggle="tab" id="tab-produtos">
+	    							<font color="#48990E"><i class="icon-eye-open"></i> Produtos</font>
+	    						</a>
+	    					</li>
+	    					<li id="mapaOp" ng-click="getMapalocalizacaoInicial(empresa.latitude , empresa.longitude , empresa.raio);">
+	    						<a href="#tab4" data-toggle="tab" id="tab-mapa">
+	    							<font color="#48990E"><i class="icon-map-marker"></i> Mapa</font>
+	    						</a>
+	    					</li>
+						</ul>
+					
+					<div class="tab-content">
+							<div class="tab-pane" id="tab1" >
+							  	<div pedido></div>
+							</div>
+							<div class="tab-pane" id="tab3">
+								<div produto></div>
+							</div>
+							<div class="tab-pane" id="tab4">
+								<div  mapatab></div>			     		 
+							</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="cancelandoAtulizacao" style="cursor: default; display: none; height: 60px; width: 60px;">
+	<p><img src="../images/loader.gif" style="height: 50px; width: 50px;"></p>
+</div>
+</body>
+</html>
+
